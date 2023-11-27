@@ -31,14 +31,14 @@ func main() {
 	wg.Add(2)
 	go func() {
 		defer wg.Done()
-		for _ = range [10e10]uint64{} {
+		for _ = range make([]uint64, 10e10) {
 			transfer(&userA, &userB, 1)
 		}
 	}()
 
 	go func() {
 		defer wg.Done()
-		for _ = range [10e10]uint64{} {
+		for _ = range make([]uint64, 10e10) {
 			transfer(&userB, &userA, 1)
 		}
 	}()
