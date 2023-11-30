@@ -8,6 +8,7 @@ import (
 func SetUp() *gin.Engine {
 	router := gin.Default()
 	router.GET("/", Greet)
+	router.Group("/v1")
 	return router
 }
 
