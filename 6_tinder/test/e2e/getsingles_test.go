@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/suite"
 	"net/http"
 	"testing"
+	"tinder/cmd/matching/router"
 )
 
 const (
@@ -34,5 +35,16 @@ func (s *GetSinglesTestSuite) Test_emptyQueryString() {
 		Expect(s.T()).
 		Status(http.StatusBadRequest).
 		Assert(jsonpath.NotPresent("$")).
+		End()
+}
+
+func (s *GetSinglesTestSuite) Test_nonPositiveMostPossibleQuery() {
+	apitest.New().Debug().
+		EnableNetworking(http.DefaultClient).
+		Get(s.Url).
+		Query(router.QueryKeyMostPossible, "0").
+		Expect(s.T()).
+		Status(http.StatusOK).
+		Assert(jsonpath.Len("$", 0)).
 		End()
 }
