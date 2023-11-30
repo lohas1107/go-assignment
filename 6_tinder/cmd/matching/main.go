@@ -1,8 +1,10 @@
 package main
 
-import "github.com/gin-gonic/gin"
+import (
+	"tinder/cmd/matching/router"
+)
 
 func main() {
-	router := gin.Default()
-	router.Run()
+	server := router.SetUp()
+	server.Run()
 }
