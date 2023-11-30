@@ -5,4 +5,7 @@ clean:
 build: clean
 	docker build -t tinder/matching -f $(CURDIR)/build/Dockerfile .
 
+run: build
+	docker run -p 8080:8080 tinder/matching
+
 .PHONY: build
