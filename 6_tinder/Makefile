@@ -8,4 +8,7 @@ build: clean
 run: build
 	docker run -p 8080:8080 tinder/matching
 
+e2e:
+	go test $(CURDIR)/test/e2e
+
 .PHONY: build
