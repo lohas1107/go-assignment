@@ -9,7 +9,7 @@ func SetUp() *gin.Engine {
 	router.GET("/", Greet)
 
 	v1 := router.Group("/v1")
-	v1.GET("/singles")
+	v1.GET("/singles", GetSingles)
 
 	return router
 }

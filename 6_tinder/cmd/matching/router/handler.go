@@ -8,3 +8,7 @@ import (
 func Greet(context *gin.Context) {
 	context.JSON(http.StatusOK, "hello, world")
 }
+
+func GetSingles(context *gin.Context) {
+	context.JSON(http.StatusBadRequest, nil)
+}
