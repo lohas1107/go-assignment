@@ -3,6 +3,7 @@ module tinder
 go 1.21.4
 
 require (
+	github.com/elliotchance/orderedmap/v2 v2.2.0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/steinfletcher/apitest v1.5.15
 	github.com/steinfletcher/apitest-jsonpath v1.7.2
