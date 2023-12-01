@@ -31,11 +31,11 @@ func (s *AddSingleTestSuite) SetupTest() {
 }
 
 func (s *AddSingleTestSuite) Test_invalidGender() {
-	body := s.givenSingle(&matching.Single{
+	request := s.givenSingleRequest(&matching.Single{
 		Gender: "",
 		Height: 0,
 	})
-	response := s.addSingle(body)
+	response := s.addSingle(request)
 	response.
 		Status(http.StatusBadRequest).
 		Assert(jsonpath.NotPresent("$")).
@@ -43,11 +43,11 @@ func (s *AddSingleTestSuite) Test_invalidGender() {
 }
 
 func (s *AddSingleTestSuite) Test_givenNoAnySingle_addOneBoy() {
-	body := s.givenSingle(&matching.Single{
+	request := s.givenSingleRequest(&matching.Single{
 		Gender: "BOY",
 		Height: 0,
 	})
-	response := s.addSingle(body)
+	response := s.addSingle(request)
 	response.
 		Status(http.StatusCreated).
 		Assert(jsonpath.Len("$", 0)).
@@ -75,17 +75,17 @@ func (s *AddSingleTestSuite) Test_addAndMatch() {
 		End()
 }
 
-func (s *AddSingleTestSuite) givenSingle(single *matching.Single) string {
-	body, err := json.Marshal(single)
+func (s *AddSingleTestSuite) givenSingleRequest(single *matching.Single) string {
+	request, err := json.Marshal(single)
 	if err != nil {
 		panic(err)
 	}
-	return string(body)
+	return string(request)
 }
 
 func (s *AddSingleTestSuite) givenAddedSingle(single *matching.Single) *apitest.Response {
-	body := s.givenSingle(single)
-	response := s.addSingle(body)
+	request := s.givenSingleRequest(single)
+	response := s.addSingle(request)
 	response.End()
 	return response
 }
