@@ -55,6 +55,20 @@ func (s *GetSinglesTestSuite) Test_noBoyExists_responseAllShortestGirls() {
 		End()
 }
 
+func (s *GetSinglesTestSuite) Test_noGirlExists_responseAllHighestBoys() {
+	s.givenSingleAdded("BOY", 170, 1)
+	s.givenSingleAdded("BOY", 185, 1)
+
+	response := s.getMostPossibleMatches("1")
+	response.
+		Status(http.StatusOK).
+		Assert(jsonpath.Len("$", 1)).
+		Assert(jsonpath.Equal("$[0].gender", "BOY")).
+		Assert(jsonpath.Equal("$[0].height", float64(185))).
+		Assert(jsonpath.Equal("$[0].wantedDates", float64(1))).
+		End()
+}
+
 func (s *GetSinglesTestSuite) givenSingleAdded(gender string, height int, wantedDates int) {
 	single := &matching.Single{
 		Gender:      gender,
