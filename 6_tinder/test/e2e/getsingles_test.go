@@ -55,6 +55,20 @@ func (s *GetSinglesTestSuite) Test_noBoyExists_responseAllShortestGirls() {
 		End()
 }
 
+func (s *GetSinglesTestSuite) Test_noBoyExists_responsePartialShortestGirls() {
+	s.givenSingleAdded("GIRL", 165, 1)
+	s.givenSingleAdded("GIRL", 165, 1)
+
+	response := s.getMostPossibleMatches("1")
+	response.
+		Status(http.StatusOK).
+		Assert(jsonpath.Len("$", 1)).
+		Assert(jsonpath.Equal("$[0].gender", "GIRL")).
+		Assert(jsonpath.Equal("$[0].height", float64(165))).
+		Assert(jsonpath.Equal("$[0].wantedDates", float64(1))).
+		End()
+}
+
 func (s *GetSinglesTestSuite) Test_noGirlExists_responseAllHighestBoys() {
 	s.givenSingleAdded("BOY", 170, 1)
 	s.givenSingleAdded("BOY", 185, 1)
@@ -65,6 +79,20 @@ func (s *GetSinglesTestSuite) Test_noGirlExists_responseAllHighestBoys() {
 		Assert(jsonpath.Len("$", 1)).
 		Assert(jsonpath.Equal("$[0].gender", "BOY")).
 		Assert(jsonpath.Equal("$[0].height", float64(185))).
+		Assert(jsonpath.Equal("$[0].wantedDates", float64(1))).
+		End()
+}
+
+func (s *GetSinglesTestSuite) Test_noGirlExists_responsePartialHighestBoys() {
+	s.givenSingleAdded("BOY", 170, 1)
+	s.givenSingleAdded("BOY", 170, 1)
+
+	response := s.getMostPossibleMatches("1")
+	response.
+		Status(http.StatusOK).
+		Assert(jsonpath.Len("$", 1)).
+		Assert(jsonpath.Equal("$[0].gender", "BOY")).
+		Assert(jsonpath.Equal("$[0].height", float64(170))).
 		Assert(jsonpath.Equal("$[0].wantedDates", float64(1))).
 		End()
 }

@@ -27,10 +27,11 @@ func GetPossibleMatches(count int) []Single {
 	}
 	if Boys.Len() == 0 {
 		value, _ := Girls.Get(SortedGirls[0])
-		return value
+		return value[0:count]
 	}
 	if Girls.Len() == 0 {
-		return Boys.Back().Value
+		value, _ := Boys.Get(SortedBoys[0])
+		return value[0:count]
 	}
 
 	return []Single{}
