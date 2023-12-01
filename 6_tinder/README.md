@@ -50,3 +50,9 @@ Response
 ```shell
 null
 ```
+
+## System Design
+### Time complexity
+- Query Possible Singles: `O(N)`
+- Add Single and Match: `O(logN)`
+- Remove Single: `Q(1)`
