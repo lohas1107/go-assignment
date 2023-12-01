@@ -1,23 +1,18 @@
 # Tinder Matching
 
 ### Project Layout
-```text
+```shell
 .
-|-- api
-|-- build
-|-- cmd
-|   `-- matching
-|       |-- router
-|       |   |-- handler
-|       |   `-- router.go
-|       |-- tests
-|       `-- main.go
-|-- deployments
-|-- internal
-|   |-- app
-|   `-- pkg
-|-- scripts
-|-- test
+|-- /api                        # API documentation
+|-- /build                      # Docker image build
+|-- /cmd
+|   `-- /matching
+|       |-- /router             # Endpoint handlers
+|       `-- main.go             # Application entry point
+|-- /internal
+|   |-- /matching               # Business logic
+|   `-- /pkg
+|-- /test                       # Integration tests
 |-- Makefile
 |-- README.md
 `-- go.mod
