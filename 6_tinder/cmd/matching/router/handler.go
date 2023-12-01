@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
+	"tinder/internal/matching"
 )
 
 const (
@@ -12,6 +13,11 @@ const (
 
 func Greet(context *gin.Context) {
 	context.JSON(http.StatusOK, "hello, world")
+}
+
+func DeleteAllSingles(context *gin.Context) {
+	matching.Initialize() //todo
+	context.JSON(http.StatusOK, nil)
 }
 
 func GetPossibleSingles(context *gin.Context) {
