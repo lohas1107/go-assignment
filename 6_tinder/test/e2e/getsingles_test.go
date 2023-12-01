@@ -1,7 +1,6 @@
 package e2e
 
 import (
-	"fmt"
 	"github.com/steinfletcher/apitest"
 	"github.com/steinfletcher/apitest-jsonpath"
 	"github.com/stretchr/testify/suite"
@@ -10,22 +9,17 @@ import (
 	"tinder/cmd/matching/router"
 )
 
-const (
-	Host    = "http://localhost:8080"
-	Version = "v1"
-)
-
-func TestGetSinglesTestSuite(t *testing.T) {
-	suite.Run(t, new(GetSinglesTestSuite))
-}
-
 type GetSinglesTestSuite struct {
 	suite.Suite
 	Url string
 }
 
+func TestGetSinglesTestSuite(t *testing.T) {
+	suite.Run(t, new(GetSinglesTestSuite))
+}
+
 func (s *GetSinglesTestSuite) SetupTest() {
-	s.Url = fmt.Sprintf("%s/%s%s", Host, Version, "/singles")
+	s.Url = GetUrl("/singles")
 }
 
 func (s *GetSinglesTestSuite) Test_emptyQueryString() {

@@ -24,3 +24,7 @@ func GetPossibleSingles(context *gin.Context) {
 		context.JSON(http.StatusOK, []any{})
 	}
 }
+
+func PostSingle(context *gin.Context) {
+	context.JSON(http.StatusCreated, []any{})
+}
