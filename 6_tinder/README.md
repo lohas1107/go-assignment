@@ -1,6 +1,6 @@
 # Tinder Matching
 
-### Project Layout
+## Project Layout
 ```shell
 .
 |-- /api                        # API documentation
@@ -16,4 +16,37 @@
 |-- Makefile
 |-- README.md
 `-- go.mod
+```
+
+## API List
+> Host: [http://localhost:8080](http://localhost:8080)
+
+### Query Possible Singles
+Request
+```shell
+GET /v1/singles?most_possible={count}
+```
+Response
+```shell
+[{"gender":"GIRL","height":165,"wantedDates":1},{"gender":"GIRL","height":165,"wantedDates":1}]
+```
+
+### Add Single and Match
+Request
+```shell
+POST /v1/singles 
+``` 
+Response
+```shell
+[{"gender":"GIRL","height":165,"wantedDates":1},{"gender":"GIRL","height":165,"wantedDates":1}]
+```
+
+### Remove Single
+Request
+```shell
+DELETE /v1/singles/{id}
+``` 
+Response
+```shell
+null
 ```
