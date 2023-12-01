@@ -24,17 +24,23 @@ func (s *AddSingleTestSuite) SetupTest() {
 }
 
 func (s *AddSingleTestSuite) Test_givenNoAnySingle_addOneBoy() {
-	apitest.New().Debug().
-		EnableNetworking(http.DefaultClient).
-		Post(s.Url).
-		Body(`{
-			"name": "Bob",
-			"gender": "BOY",
-			"height": 185,
-			"wantedDates": 1
-		}`).
-		Expect(s.T()).
+	body := `{ 
+	"name": "Bob",
+	"gender": "BOY",
+	"height": 185,
+	"wantedDates": 1
+}`
+	response := s.addSingle(body)
+	response.
 		Status(http.StatusCreated).
 		Assert(jsonpath.Len("$", 0)).
 		End()
+}
+
+func (s *AddSingleTestSuite) addSingle(body string) *apitest.Response {
+	return apitest.New().Debug().
+		EnableNetworking(http.DefaultClient).
+		Post(s.Url).
+		Body(body).
+		Expect(s.T())
 }
