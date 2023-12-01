@@ -32,7 +32,7 @@ func (s *AddSingleTestSuite) Test_invalidGender() {
 	}
 
 	response := s.givenAddedSingle(invalidSingle)
-	s.shouldNotResponseContent(response, http.StatusBadRequest)
+	s.shouldResponseEmptyContent(response)
 }
 
 func (s *AddSingleTestSuite) Test_nonPositiveHeight() {
@@ -42,7 +42,7 @@ func (s *AddSingleTestSuite) Test_nonPositiveHeight() {
 	}
 
 	response := s.givenAddedSingle(invalidSingle)
-	s.shouldNotResponseContent(response, http.StatusBadRequest)
+	s.shouldResponseEmptyContent(response)
 }
 
 func (s *AddSingleTestSuite) Test_nonPositiveWantedDates() {
@@ -53,7 +53,7 @@ func (s *AddSingleTestSuite) Test_nonPositiveWantedDates() {
 	}
 
 	response := s.givenAddedSingle(invalidSingle)
-	s.shouldNotResponseContent(response, http.StatusBadRequest)
+	s.shouldResponseEmptyContent(response)
 }
 
 func (s *AddSingleTestSuite) Test_noSingleExists_addBoy() {
@@ -64,7 +64,7 @@ func (s *AddSingleTestSuite) Test_noSingleExists_addBoy() {
 	}
 
 	response := s.givenAddedSingle(boy)
-	s.shouldNotResponseMatches(response, http.StatusCreated)
+	s.shouldResponseEmptyMatches(response)
 }
 
 func (s *AddSingleTestSuite) Test_noSingleExists_addGirl() {
@@ -75,7 +75,7 @@ func (s *AddSingleTestSuite) Test_noSingleExists_addGirl() {
 	}
 
 	response := s.givenAddedSingle(girl)
-	s.shouldNotResponseMatches(response, http.StatusCreated)
+	s.shouldResponseEmptyMatches(response)
 }
 
 func (s *AddSingleTestSuite) Test_addBoyButNoAnyMatch() {
@@ -86,7 +86,7 @@ func (s *AddSingleTestSuite) Test_addBoyButNoAnyMatch() {
 	}
 
 	response := s.givenAddedSingle(girl)
-	s.shouldNotResponseMatches(response, http.StatusCreated)
+	s.shouldResponseEmptyMatches(response)
 
 	boy := &matching.Single{
 		Gender:      "BOY",
@@ -95,7 +95,7 @@ func (s *AddSingleTestSuite) Test_addBoyButNoAnyMatch() {
 	}
 
 	response = s.givenAddedSingle(boy)
-	s.shouldNotResponseMatches(response, http.StatusCreated)
+	s.shouldResponseEmptyMatches(response)
 }
 
 func (s *AddSingleTestSuite) Test_addGirlButNoAnyMatch() {
@@ -106,7 +106,7 @@ func (s *AddSingleTestSuite) Test_addGirlButNoAnyMatch() {
 	}
 
 	response := s.givenAddedSingle(boy)
-	s.shouldNotResponseMatches(response, http.StatusCreated)
+	s.shouldResponseEmptyMatches(response)
 
 	girl := &matching.Single{
 		Gender:      "GIRL",
@@ -115,7 +115,7 @@ func (s *AddSingleTestSuite) Test_addGirlButNoAnyMatch() {
 	}
 
 	response = s.givenAddedSingle(girl)
-	s.shouldNotResponseMatches(response, http.StatusCreated)
+	s.shouldResponseEmptyMatches(response)
 }
 
 func (s *AddSingleTestSuite) Test_addBoyAndMatch() {
@@ -126,7 +126,7 @@ func (s *AddSingleTestSuite) Test_addBoyAndMatch() {
 	}
 
 	response := s.givenAddedSingle(girl)
-	s.shouldNotResponseMatches(response, http.StatusCreated)
+	s.shouldResponseEmptyMatches(response)
 
 	boy := &matching.Single{
 		Gender:      "BOY",
@@ -152,7 +152,7 @@ func (s *AddSingleTestSuite) Test_addGirlAndMatch() {
 	}
 
 	response := s.givenAddedSingle(boy)
-	s.shouldNotResponseMatches(response, http.StatusCreated)
+	s.shouldResponseEmptyMatches(response)
 
 	girl := &matching.Single{
 		Gender:      "GIRL",
@@ -185,16 +185,16 @@ func (s *AddSingleTestSuite) givenAddedSingle(single *matching.Single) *apitest.
 	return response
 }
 
-func (s *AddSingleTestSuite) shouldNotResponseContent(response *apitest.Response, created int) apitest.Result {
+func (s *AddSingleTestSuite) shouldResponseEmptyContent(response *apitest.Response) apitest.Result {
 	return response.
-		Status(created).
+		Status(http.StatusBadRequest).
 		Assert(jsonpath.NotPresent("$")).
 		End()
 }
 
-func (s *AddSingleTestSuite) shouldNotResponseMatches(response *apitest.Response, created int) apitest.Result {
+func (s *AddSingleTestSuite) shouldResponseEmptyMatches(response *apitest.Response) apitest.Result {
 	return response.
-		Status(created).
+		Status(http.StatusCreated).
 		Assert(jsonpath.Len("$", 0)).
 		End()
 }
