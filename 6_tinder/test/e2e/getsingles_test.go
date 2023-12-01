@@ -20,6 +20,7 @@ func TestGetSinglesTestSuite(t *testing.T) {
 
 func (s *GetSinglesTestSuite) SetupTest() {
 	s.Url = GetUrl("/singles")
+	Reset(s.T())
 }
 
 func (s *GetSinglesTestSuite) Test_emptyQueryString() {

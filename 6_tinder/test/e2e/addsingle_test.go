@@ -22,12 +22,7 @@ func TestAddSingleTestSuite(t *testing.T) {
 
 func (s *AddSingleTestSuite) SetupTest() {
 	s.Url = GetUrl("/singles")
-	apitest.New().Debug().
-		EnableNetworking(http.DefaultClient).
-		Delete(s.Url).
-		Expect(s.T()).
-		Status(http.StatusOK).
-		End()
+	Reset(s.T())
 }
 
 func (s *AddSingleTestSuite) Test_invalidGender() {
