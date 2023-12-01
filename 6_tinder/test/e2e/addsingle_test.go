@@ -1,11 +1,13 @@
 package e2e
 
 import (
+	"encoding/json"
 	"github.com/steinfletcher/apitest"
 	"github.com/steinfletcher/apitest-jsonpath"
 	"github.com/stretchr/testify/suite"
 	"net/http"
 	"testing"
+	"tinder/internal/matching"
 )
 
 type AddSingleTestSuite struct {
@@ -24,17 +26,29 @@ func (s *AddSingleTestSuite) SetupTest() {
 }
 
 func (s *AddSingleTestSuite) Test_givenNoAnySingle_addOneBoy() {
-	body := `{ 
-	"name": "Bob",
-	"gender": "BOY",
-	"height": 185,
-	"wantedDates": 1
-}`
+	body := s.givenSingle(&matching.Single{})
 	response := s.addSingle(body)
 	response.
 		Status(http.StatusCreated).
 		Assert(jsonpath.Len("$", 0)).
 		End()
+}
+
+func (s *AddSingleTestSuite) Test_() {
+	body := s.givenSingle(&matching.Single{})
+	response := s.addSingle(body)
+	response.
+		Status(http.StatusCreated).
+		Assert(jsonpath.Len("$", 0)).
+		End()
+}
+
+func (s *AddSingleTestSuite) givenSingle(single *matching.Single) string {
+	body, err := json.Marshal(single)
+	if err != nil {
+		panic(err)
+	}
+	return string(body)
 }
 
 func (s *AddSingleTestSuite) addSingle(body string) *apitest.Response {
