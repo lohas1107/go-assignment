@@ -1,8 +1,9 @@
 package matching
 
 type Single struct {
-	Gender string `json:"gender"`
-	Height int    `json:"height"`
+	Gender      string `json:"gender"`
+	Height      int    `json:"height"`
+	WantedDates int    `json:"wantedDates"`
 }
 
 func (s *Single) IsValidGender() bool {

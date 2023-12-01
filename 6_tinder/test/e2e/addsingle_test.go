@@ -54,12 +54,24 @@ func (s *AddSingleTestSuite) Test_givenNoAnySingle_addOneBoy() {
 		End()
 }
 
-func (s *AddSingleTestSuite) Test_() {
-	body := s.givenSingle(&matching.Single{})
-	response := s.addSingle(body)
+func (s *AddSingleTestSuite) Test_addAndMatch() {
+	boy := &matching.Single{
+		Gender:      "BOY",
+		Height:      185,
+		WantedDates: 1,
+	}
+	s.givenAddedSingle(boy)
+	girl := &matching.Single{
+		Gender: "GIRL",
+		Height: 0,
+	}
+	response := s.givenAddedSingle(girl)
 	response.
 		Status(http.StatusCreated).
-		Assert(jsonpath.Len("$", 0)).
+		Assert(jsonpath.Len("$", 1)).
+		Assert(jsonpath.Equal("$[0].gender", "BOY")).
+		Assert(jsonpath.Equal("$[0].height", float64(185))).
+		Assert(jsonpath.Equal("$[0].wantedDates", float64(1))).
 		End()
 }
 
@@ -69,6 +81,13 @@ func (s *AddSingleTestSuite) givenSingle(single *matching.Single) string {
 		panic(err)
 	}
 	return string(body)
+}
+
+func (s *AddSingleTestSuite) givenAddedSingle(single *matching.Single) *apitest.Response {
+	body := s.givenSingle(single)
+	response := s.addSingle(body)
+	response.End()
+	return response
 }
 
 func (s *AddSingleTestSuite) addSingle(body string) *apitest.Response {
