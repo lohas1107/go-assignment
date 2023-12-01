@@ -40,10 +40,20 @@ func (s *AddSingleTestSuite) Test_invalidGender() {
 	s.shouldNotResponseContent(response, http.StatusBadRequest)
 }
 
+func (s *AddSingleTestSuite) Test_nonPositiveHeight() {
+	invalidSingle := &matching.Single{
+		Gender: "GIRL",
+		Height: -200,
+	}
+
+	response := s.givenAddedSingle(invalidSingle)
+	s.shouldNotResponseContent(response, http.StatusBadRequest)
+}
+
 func (s *AddSingleTestSuite) Test_givenNoAnySingle_addOneBoy() {
 	boy := &matching.Single{
 		Gender: "BOY",
-		Height: 0,
+		Height: 180,
 	}
 
 	response := s.givenAddedSingle(boy)
@@ -100,7 +110,7 @@ func (s *AddSingleTestSuite) Test_addAndMatch() {
 
 	girl := &matching.Single{
 		Gender: "GIRL",
-		Height: 0,
+		Height: 160,
 	}
 
 	response = s.givenAddedSingle(girl)

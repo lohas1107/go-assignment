@@ -44,6 +44,11 @@ func PostSingle(context *gin.Context) {
 		return
 	}
 
+	if single.Height <= 0 {
+		context.JSON(http.StatusBadRequest, nil)
+		return
+	}
+
 	possibleMatches := matching.AddAndMatch(single)
 	context.JSON(http.StatusCreated, possibleMatches)
 }
