@@ -1,13 +1,11 @@
 package e2e
 
 import (
-	"encoding/json"
 	"github.com/steinfletcher/apitest"
 	"github.com/steinfletcher/apitest-jsonpath"
 	"github.com/stretchr/testify/suite"
 	"net/http"
 	"testing"
-	"tinder/internal/matching"
 )
 
 type AddSingleTestSuite struct {
@@ -18,6 +16,7 @@ type AddSingleTestSuite struct {
 
 func TestAddSingleTestSuite(t *testing.T) {
 	suite.Run(t, new(AddSingleTestSuite))
+	test = t
 }
 
 func (s *AddSingleTestSuite) SetupTest() {
@@ -26,115 +25,51 @@ func (s *AddSingleTestSuite) SetupTest() {
 }
 
 func (s *AddSingleTestSuite) Test_invalidGender() {
-	invalidSingle := &matching.Single{
-		Gender: "",
-		Height: 0,
-	}
-
-	response := s.givenAddedSingle(invalidSingle)
+	response := GivenSingleAdded("", 0, 0)
 	s.shouldResponseEmptyContent(response)
 }
 
 func (s *AddSingleTestSuite) Test_nonPositiveHeight() {
-	invalidSingle := &matching.Single{
-		Gender: "GIRL",
-		Height: -200,
-	}
-
-	response := s.givenAddedSingle(invalidSingle)
+	response := GivenSingleAdded("GIRL", -200, 0)
 	s.shouldResponseEmptyContent(response)
 }
 
 func (s *AddSingleTestSuite) Test_nonPositiveWantedDates() {
-	invalidSingle := &matching.Single{
-		Gender:      "BOY",
-		Height:      200,
-		WantedDates: 0,
-	}
-
-	response := s.givenAddedSingle(invalidSingle)
+	response := GivenSingleAdded("BOY", 200, 0)
 	s.shouldResponseEmptyContent(response)
 }
 
 func (s *AddSingleTestSuite) Test_noSingleExists_addBoy() {
-	boy := &matching.Single{
-		Gender:      "BOY",
-		Height:      180,
-		WantedDates: 1,
-	}
-
-	response := s.givenAddedSingle(boy)
+	response := GivenSingleAdded("BOY", 180, 1)
 	s.shouldResponseEmptyMatches(response)
 }
 
 func (s *AddSingleTestSuite) Test_noSingleExists_addGirl() {
-	girl := &matching.Single{
-		Gender:      "GIRL",
-		Height:      170,
-		WantedDates: 1,
-	}
-
-	response := s.givenAddedSingle(girl)
+	response := GivenSingleAdded("GIRL", 170, 1)
 	s.shouldResponseEmptyMatches(response)
 }
 
 func (s *AddSingleTestSuite) Test_addBoyButNoAnyMatch() {
-	girl := &matching.Single{
-		Gender:      "GIRL",
-		Height:      170,
-		WantedDates: 1,
-	}
-
-	response := s.givenAddedSingle(girl)
+	response := GivenSingleAdded("GIRL", 170, 1)
 	s.shouldResponseEmptyMatches(response)
 
-	boy := &matching.Single{
-		Gender:      "BOY",
-		Height:      160,
-		WantedDates: 1,
-	}
-
-	response = s.givenAddedSingle(boy)
+	response = GivenSingleAdded("BOY", 160, 1)
 	s.shouldResponseEmptyMatches(response)
 }
 
 func (s *AddSingleTestSuite) Test_addGirlButNoAnyMatch() {
-	boy := &matching.Single{
-		Gender:      "BOY",
-		Height:      160,
-		WantedDates: 1,
-	}
-
-	response := s.givenAddedSingle(boy)
+	response := GivenSingleAdded("BOY", 160, 1)
 	s.shouldResponseEmptyMatches(response)
 
-	girl := &matching.Single{
-		Gender:      "GIRL",
-		Height:      170,
-		WantedDates: 1,
-	}
-
-	response = s.givenAddedSingle(girl)
+	response = GivenSingleAdded("GIRL", 170, 1)
 	s.shouldResponseEmptyMatches(response)
 }
 
 func (s *AddSingleTestSuite) Test_addBoyAndMatch() {
-	girl := &matching.Single{
-		Gender:      "GIRL",
-		Height:      160,
-		WantedDates: 1,
-	}
-
-	response := s.givenAddedSingle(girl)
+	response := GivenSingleAdded("GIRL", 160, 1)
 	s.shouldResponseEmptyMatches(response)
 
-	boy := &matching.Single{
-		Gender:      "BOY",
-		Height:      185,
-		WantedDates: 1,
-	}
-
-	response = s.givenAddedSingle(boy)
+	response = GivenSingleAdded("BOY", 185, 1)
 	response.
 		Status(http.StatusCreated).
 		Assert(jsonpath.Len("$", 1)).
@@ -145,22 +80,10 @@ func (s *AddSingleTestSuite) Test_addBoyAndMatch() {
 }
 
 func (s *AddSingleTestSuite) Test_addGirlAndMatch() {
-	boy := &matching.Single{
-		Gender:      "BOY",
-		Height:      185,
-		WantedDates: 1,
-	}
-
-	response := s.givenAddedSingle(boy)
+	response := GivenSingleAdded("BOY", 185, 1)
 	s.shouldResponseEmptyMatches(response)
 
-	girl := &matching.Single{
-		Gender:      "GIRL",
-		Height:      160,
-		WantedDates: 1,
-	}
-
-	response = s.givenAddedSingle(girl)
+	response = GivenSingleAdded("GIRL", 160, 1)
 	response.
 		Status(http.StatusCreated).
 		Assert(jsonpath.Len("$", 1)).
@@ -168,21 +91,6 @@ func (s *AddSingleTestSuite) Test_addGirlAndMatch() {
 		Assert(jsonpath.Equal("$[0].height", float64(185))).
 		Assert(jsonpath.Equal("$[0].wantedDates", float64(1))).
 		End()
-}
-
-func (s *AddSingleTestSuite) givenAddedSingle(single *matching.Single) *apitest.Response {
-	request, err := json.Marshal(single)
-	if err != nil {
-		panic(err)
-	}
-
-	response := apitest.New().Debug().
-		EnableNetworking(http.DefaultClient).
-		Post(s.Url).
-		Body(string(request)).
-		Expect(s.T())
-
-	return response
 }
 
 func (s *AddSingleTestSuite) shouldResponseEmptyContent(response *apitest.Response) apitest.Result {

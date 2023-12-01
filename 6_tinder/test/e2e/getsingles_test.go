@@ -16,6 +16,7 @@ type GetSinglesTestSuite struct {
 
 func TestGetSinglesTestSuite(t *testing.T) {
 	suite.Run(t, new(GetSinglesTestSuite))
+	test = t
 }
 
 func (s *GetSinglesTestSuite) SetupTest() {
