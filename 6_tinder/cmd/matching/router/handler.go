@@ -16,7 +16,7 @@ func Greet(context *gin.Context) {
 }
 
 func DeleteAllSingles(context *gin.Context) {
-	matching.Initialize() //todo
+	matching.Initialize()
 	context.JSON(http.StatusOK, nil)
 }
 
@@ -39,12 +39,7 @@ func PostSingle(context *gin.Context) {
 		return
 	}
 
-	if !single.IsValidGender() {
-		context.JSON(http.StatusBadRequest, nil)
-		return
-	}
-
-	if single.Height <= 0 {
+	if !single.IsValidGender() || single.Height <= 0 || single.WantedDates <= 0 {
 		context.JSON(http.StatusBadRequest, nil)
 		return
 	}
