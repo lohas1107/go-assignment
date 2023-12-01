@@ -31,27 +31,24 @@ func (s *AddSingleTestSuite) SetupTest() {
 }
 
 func (s *AddSingleTestSuite) Test_invalidGender() {
-	request := s.givenSingleRequest(&matching.Single{
+	invalidSingle := &matching.Single{
 		Gender: "",
 		Height: 0,
-	})
-	response := s.addSingle(request)
-	response.
-		Status(http.StatusBadRequest).
-		Assert(jsonpath.NotPresent("$")).
-		End()
+	}
+
+	response := s.givenAddedSingle(invalidSingle)
+	s.shouldNotResponseContent(response, http.StatusBadRequest)
 }
 
 func (s *AddSingleTestSuite) Test_givenNoAnySingle_addOneBoy() {
-	request := s.givenSingleRequest(&matching.Single{
+	boy := &matching.Single{
 		Gender: "BOY",
 		Height: 0,
-	})
-	response := s.addSingle(request)
-	response.
-		Status(http.StatusCreated).
-		Assert(jsonpath.Len("$", 0)).
-		End()
+	}
+
+	response := s.givenAddedSingle(boy)
+	s.shouldNotResponseMatches(response, http.StatusCreated)
+}
 }
 
 func (s *AddSingleTestSuite) Test_addAndMatch() {
@@ -60,12 +57,16 @@ func (s *AddSingleTestSuite) Test_addAndMatch() {
 		Height:      185,
 		WantedDates: 1,
 	}
-	s.givenAddedSingle(boy)
+
+	response := s.givenAddedSingle(boy)
+	s.shouldNotResponseMatches(response, http.StatusCreated)
+
 	girl := &matching.Single{
 		Gender: "GIRL",
 		Height: 0,
 	}
-	response := s.givenAddedSingle(girl)
+
+	response = s.givenAddedSingle(girl)
 	response.
 		Status(http.StatusCreated).
 		Assert(jsonpath.Len("$", 1)).
@@ -75,25 +76,31 @@ func (s *AddSingleTestSuite) Test_addAndMatch() {
 		End()
 }
 
-func (s *AddSingleTestSuite) givenSingleRequest(single *matching.Single) string {
+func (s *AddSingleTestSuite) givenAddedSingle(single *matching.Single) *apitest.Response {
 	request, err := json.Marshal(single)
 	if err != nil {
 		panic(err)
 	}
-	return string(request)
-}
 
-func (s *AddSingleTestSuite) givenAddedSingle(single *matching.Single) *apitest.Response {
-	request := s.givenSingleRequest(single)
-	response := s.addSingle(request)
-	response.End()
+	response := apitest.New().Debug().
+		EnableNetworking(http.DefaultClient).
+		Post(s.Url).
+		Body(string(request)).
+		Expect(s.T())
+
 	return response
 }
 
-func (s *AddSingleTestSuite) addSingle(body string) *apitest.Response {
-	return apitest.New().Debug().
-		EnableNetworking(http.DefaultClient).
-		Post(s.Url).
-		Body(body).
-		Expect(s.T())
+func (s *AddSingleTestSuite) shouldNotResponseContent(response *apitest.Response, created int) apitest.Result {
+	return response.
+		Status(created).
+		Assert(jsonpath.NotPresent("$")).
+		End()
+}
+
+func (s *AddSingleTestSuite) shouldNotResponseMatches(response *apitest.Response, created int) apitest.Result {
+	return response.
+		Status(created).
+		Assert(jsonpath.Len("$", 0)).
+		End()
 }
