@@ -112,7 +112,33 @@ func (s *AddSingleTestSuite) Test_addGirlButNoAnyMatch() {
 	s.shouldNotResponseMatches(response, http.StatusCreated)
 }
 
-func (s *AddSingleTestSuite) Test_addAndMatch() {
+func (s *AddSingleTestSuite) Test_addBoyAndMatch() {
+	girl := &matching.Single{
+		Gender:      "GIRL",
+		Height:      160,
+		WantedDates: 1,
+	}
+
+	response := s.givenAddedSingle(girl)
+	s.shouldNotResponseMatches(response, http.StatusCreated)
+
+	boy := &matching.Single{
+		Gender:      "BOY",
+		Height:      185,
+		WantedDates: 1,
+	}
+
+	response = s.givenAddedSingle(boy)
+	response.
+		Status(http.StatusCreated).
+		Assert(jsonpath.Len("$", 1)).
+		Assert(jsonpath.Equal("$[0].gender", "GIRL")).
+		Assert(jsonpath.Equal("$[0].height", float64(160))).
+		Assert(jsonpath.Equal("$[0].wantedDates", float64(1))).
+		End()
+}
+
+func (s *AddSingleTestSuite) Test_addGirlAndMatch() {
 	boy := &matching.Single{
 		Gender:      "BOY",
 		Height:      185,
