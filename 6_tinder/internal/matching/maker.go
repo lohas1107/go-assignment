@@ -34,10 +34,20 @@ func add(single Single) {
 
 func match(single Single) []Single {
 	if single.IsBoy() && Girls.Len() > 0 {
-		return Girls.Front().Value
+		shortest := Girls.Front()
+		if single.Height < shortest.Key {
+			return []Single{}
+		}
+		return shortest.Value
 	}
+
 	if single.IsGirl() && Boys.Len() > 0 {
-		return Boys.Front().Value
+		highest := Boys.Front()
+		if single.Height > highest.Key {
+			return []Single{}
+		}
+		return highest.Value
 	}
+
 	return []Single{}
 }

@@ -49,6 +49,43 @@ func (s *AddSingleTestSuite) Test_givenNoAnySingle_addOneBoy() {
 	response := s.givenAddedSingle(boy)
 	s.shouldNotResponseMatches(response, http.StatusCreated)
 }
+
+func (s *AddSingleTestSuite) Test_addBoyButNoAnyMatch() {
+	girl := &matching.Single{
+		Gender: "GIRL",
+		Height: 170,
+	}
+
+	response := s.givenAddedSingle(girl)
+	s.shouldNotResponseMatches(response, http.StatusCreated)
+
+	boy := &matching.Single{
+		Gender:      "BOY",
+		Height:      160,
+		WantedDates: 1,
+	}
+
+	response = s.givenAddedSingle(boy)
+	s.shouldNotResponseMatches(response, http.StatusCreated)
+}
+
+func (s *AddSingleTestSuite) Test_addGirlButNoAnyMatch() {
+	boy := &matching.Single{
+		Gender:      "BOY",
+		Height:      160,
+		WantedDates: 1,
+	}
+
+	response := s.givenAddedSingle(boy)
+	s.shouldNotResponseMatches(response, http.StatusCreated)
+
+	girl := &matching.Single{
+		Gender: "GIRL",
+		Height: 170,
+	}
+
+	response = s.givenAddedSingle(girl)
+	s.shouldNotResponseMatches(response, http.StatusCreated)
 }
 
 func (s *AddSingleTestSuite) Test_addAndMatch() {
