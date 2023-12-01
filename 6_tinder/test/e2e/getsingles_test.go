@@ -43,3 +43,14 @@ func (s *GetSinglesTestSuite) Test_nonPositiveMostPossibleQuery() {
 		Assert(jsonpath.Len("$", 0)).
 		End()
 }
+
+func (s *GetSinglesTestSuite) Test_noSingleExists() {
+	apitest.New().Debug().
+		EnableNetworking(http.DefaultClient).
+		Get(s.Url).
+		Query(router.QueryKeyMostPossible, "1").
+		Expect(s.T()).
+		Status(http.StatusOK).
+		Assert(jsonpath.Len("$", 0)).
+		End()
+}
