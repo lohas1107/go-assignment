@@ -61,7 +61,7 @@ func (s *AddSingleTestSuite) Test_nonPositiveWantedDates() {
 	s.shouldNotResponseContent(response, http.StatusBadRequest)
 }
 
-func (s *AddSingleTestSuite) Test_givenNoAnySingle_addOneBoy() {
+func (s *AddSingleTestSuite) Test_noSingleExists_addBoy() {
 	boy := &matching.Single{
 		Gender:      "BOY",
 		Height:      180,
@@ -69,6 +69,17 @@ func (s *AddSingleTestSuite) Test_givenNoAnySingle_addOneBoy() {
 	}
 
 	response := s.givenAddedSingle(boy)
+	s.shouldNotResponseMatches(response, http.StatusCreated)
+}
+
+func (s *AddSingleTestSuite) Test_noSingleExists_addGirl() {
+	girl := &matching.Single{
+		Gender:      "GIRL",
+		Height:      170,
+		WantedDates: 1,
+	}
+
+	response := s.givenAddedSingle(girl)
 	s.shouldNotResponseMatches(response, http.StatusCreated)
 }
 
