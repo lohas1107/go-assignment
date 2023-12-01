@@ -32,5 +32,18 @@ func GetPossibleSingles(context *gin.Context) {
 }
 
 func PostSingle(context *gin.Context) {
-	context.JSON(http.StatusCreated, []any{})
+	var single matching.Single
+	err := context.BindJSON(&single)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, nil)
+		return
+	}
+
+	if !single.IsValidGender() {
+		context.JSON(http.StatusBadRequest, nil)
+		return
+	}
+
+	possibleMatches := matching.AddAndMatch(single)
+	context.JSON(http.StatusCreated, possibleMatches)
 }

@@ -30,8 +30,23 @@ func (s *AddSingleTestSuite) SetupTest() {
 		End()
 }
 
+func (s *AddSingleTestSuite) Test_invalidGender() {
+	body := s.givenSingle(&matching.Single{
+		Gender: "",
+		Height: 0,
+	})
+	response := s.addSingle(body)
+	response.
+		Status(http.StatusBadRequest).
+		Assert(jsonpath.NotPresent("$")).
+		End()
+}
+
 func (s *AddSingleTestSuite) Test_givenNoAnySingle_addOneBoy() {
-	body := s.givenSingle(&matching.Single{})
+	body := s.givenSingle(&matching.Single{
+		Gender: "BOY",
+		Height: 0,
+	})
 	response := s.addSingle(body)
 	response.
 		Status(http.StatusCreated).

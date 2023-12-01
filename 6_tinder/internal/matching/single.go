@@ -1,32 +1,18 @@
 package matching
 
-const (
-	Boy Gender = iota
-	Girl
-)
-
-type Gender int
-
-func (g Gender) String() string {
-	switch g {
-	case Boy:
-		return "Boy"
-	case Girl:
-		return "Girl"
-	default:
-		return "Unknown"
-	}
-}
-
 type Single struct {
-	Gender Gender `json:"gender"`
+	Gender string `json:"gender"`
 	Height int    `json:"height"`
 }
 
+func (s *Single) IsValidGender() bool {
+	return s.IsBoy() || s.IsGirl()
+}
+
 func (s *Single) IsBoy() bool {
-	return Boy == s.Gender
+	return "BOY" == s.Gender
 }
 
 func (s *Single) IsGirl() bool {
-	return Girl == s.Gender
+	return "GIRL" == s.Gender
 }
