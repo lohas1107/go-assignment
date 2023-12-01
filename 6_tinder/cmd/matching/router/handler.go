@@ -21,18 +21,19 @@ func DeleteAllSingles(context *gin.Context) {
 }
 
 func GetPossibleSingles(context *gin.Context) {
-	mostPossible, err := strconv.Atoi(context.Query(QueryKeyMostPossible))
+	count, err := strconv.Atoi(context.Query(QueryKeyMostPossible))
 	if err != nil {
 		context.JSON(http.StatusBadRequest, nil)
 		return
 	}
 
-	if mostPossible <= 0 {
+	if count <= 0 {
 		context.JSON(http.StatusOK, []any{})
 		return
 	}
 
-	context.JSON(http.StatusOK, []matching.Single{})
+	possibleMatches := matching.GetPossibleMatches(count)
+	context.JSON(http.StatusOK, possibleMatches)
 }
 
 func PostSingle(context *gin.Context) {
