@@ -1,8 +1,8 @@
 clean:
 	[ ! -e $(CURDIR)/build/bin ] || rm -R $(CURDIR)/build/bin
 	docker rmi -f tinder/matching
-	docker stop matching
-	docker rm matching
+	docker stop matching || true
+	docker rm matching || true
 
 build: clean
 	docker build -t tinder/matching -f $(CURDIR)/build/Dockerfile .
