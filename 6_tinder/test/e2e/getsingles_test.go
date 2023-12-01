@@ -24,32 +24,37 @@ func (s *GetSinglesTestSuite) SetupTest() {
 }
 
 func (s *GetSinglesTestSuite) Test_emptyQueryString() {
-	apitest.New().Debug().
+	response := s.getMostPossibleMatches("")
+	s.shouldResponseEmptyContent(response)
+}
+
+func (s *GetSinglesTestSuite) Test_nonPositiveMostPossibleQuery() {
+	response := s.getMostPossibleMatches("0")
+	s.shouldResponseEmptyMatches(response)
+}
+
+func (s *GetSinglesTestSuite) Test_noSingleExists() {
+	response := s.getMostPossibleMatches("1")
+	s.shouldResponseEmptyMatches(response)
+}
+
+func (s *GetSinglesTestSuite) getMostPossibleMatches(mostPossibleQuery string) *apitest.Response {
+	return apitest.New().Debug().
 		EnableNetworking(http.DefaultClient).
 		Get(s.Url).
-		Expect(s.T()).
+		Query(router.QueryKeyMostPossible, mostPossibleQuery).
+		Expect(s.T())
+}
+
+func (s *GetSinglesTestSuite) shouldResponseEmptyContent(response *apitest.Response) apitest.Result {
+	return response.
 		Status(http.StatusBadRequest).
 		Assert(jsonpath.NotPresent("$")).
 		End()
 }
 
-func (s *GetSinglesTestSuite) Test_nonPositiveMostPossibleQuery() {
-	apitest.New().Debug().
-		EnableNetworking(http.DefaultClient).
-		Get(s.Url).
-		Query(router.QueryKeyMostPossible, "0").
-		Expect(s.T()).
-		Status(http.StatusOK).
-		Assert(jsonpath.Len("$", 0)).
-		End()
-}
-
-func (s *GetSinglesTestSuite) Test_noSingleExists() {
-	apitest.New().Debug().
-		EnableNetworking(http.DefaultClient).
-		Get(s.Url).
-		Query(router.QueryKeyMostPossible, "1").
-		Expect(s.T()).
+func (s *GetSinglesTestSuite) shouldResponseEmptyMatches(response *apitest.Response) apitest.Result {
+	return response.
 		Status(http.StatusOK).
 		Assert(jsonpath.Len("$", 0)).
 		End()
