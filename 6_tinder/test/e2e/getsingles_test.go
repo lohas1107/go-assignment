@@ -126,6 +126,54 @@ func (s *GetSinglesTestSuite) Test_noGirlExists_responseInsufficientHighBoys() {
 	assert.End()
 }
 
+func (s *GetSinglesTestSuite) Test_BoysAndGirlsExist_responseAllMostPossibleSingles() {
+	s.givenSingleAdded("BOY", 170, 1)
+	s.givenSingleAdded("GIRL", 180, 1)
+
+	response := s.getMostPossibleMatches("1")
+	assert := s.assertPossibleMatchSize(response, 1)
+	assert = s.assertResponseContent(assert, "0", "BOY", 170, 1)
+	assert.End()
+}
+
+func (s *GetSinglesTestSuite) Test_BoysAndGirlsExist_responsePartialPossibleSingles() {
+	s.givenSingleAdded("BOY", 170, 1)
+	s.givenSingleAdded("BOY", 170, 1)
+	s.givenSingleAdded("GIRL", 180, 1)
+
+	response := s.getMostPossibleMatches("1")
+	assert := s.assertPossibleMatchSize(response, 1)
+	assert = s.assertResponseContent(assert, "0", "BOY", 170, 1)
+	assert.End()
+}
+
+func (s *GetSinglesTestSuite) Test_BoysAndGirlsExist_responseMultiPossibleSingles() {
+	s.givenSingleAdded("BOY", 170, 1)
+	s.givenSingleAdded("BOY", 170, 1)
+	s.givenSingleAdded("GIRL", 180, 1)
+
+	response := s.getMostPossibleMatches("2")
+	assert := s.assertPossibleMatchSize(response, 2)
+	assert = s.assertResponseContent(assert, "0", "GIRL", 180, 1)
+	assert = s.assertResponseContent(assert, "1", "BOY", 170, 1)
+	assert.End()
+}
+
+func (s *GetSinglesTestSuite) Test_BoysAndGirlsExist_responseInsufficientPossibleSingles() {
+	s.givenSingleAdded("BOY", 170, 1)
+	s.givenSingleAdded("GIRL", 175, 1)
+	s.givenSingleAdded("GIRL", 180, 1)
+	s.givenSingleAdded("GIRL", 180, 1)
+
+	response := s.getMostPossibleMatches("5")
+	assert := s.assertPossibleMatchSize(response, 4)
+	assert = s.assertResponseContent(assert, "0", "BOY", 170, 1)
+	assert = s.assertResponseContent(assert, "1", "GIRL", 175, 1)
+	assert = s.assertResponseContent(assert, "2", "GIRL", 180, 1)
+	assert = s.assertResponseContent(assert, "3", "GIRL", 180, 1)
+	assert.End()
+}
+
 func (s *GetSinglesTestSuite) givenSingleAdded(gender string, height int, wantedDates int) {
 	single := &matching.Single{
 		Gender:      gender,

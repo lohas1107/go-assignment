@@ -34,7 +34,19 @@ func GetPossibleMatches(count int) []Single {
 		return searchPossibleMatches(count, SortedBoys, Boys)
 	}
 
-	return []Single{}
+	half := count / 2
+	take := half
+
+	if Boys.Len() < half {
+		take = Boys.Len()
+		possibleGirls := searchPossibleMatches(count-take, SortedGirls, Girls)
+		possibleBoys := searchPossibleMatches(take, SortedBoys, Boys)
+		return append(possibleBoys, possibleGirls...)
+	}
+
+	possibleGirls := searchPossibleMatches(take, SortedGirls, Girls)
+	possibleBoys := searchPossibleMatches(count-take, SortedBoys, Boys)
+	return append(possibleGirls, possibleBoys...)
 }
 
 func searchPossibleMatches(
