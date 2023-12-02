@@ -27,26 +27,33 @@ func GetPossibleMatches(count int) []Single {
 		return []Single{}
 	}
 
-	var possibleMatches []Single
-
 	if Boys.Len() == 0 {
-		for _, height := range SortedGirls {
-			singles, _ := Girls.Get(height)
-			take := math.Min(float64(len(singles)), float64(count))
-			possibleMatches = append(possibleMatches, singles[0:int(take)]...)
-			count -= int(take)
-			if count == 0 {
-				break
-			}
-		}
-		return possibleMatches
+		return searchPossibleMatches(count, SortedGirls, Girls)
 	}
 	if Girls.Len() == 0 {
-		value, _ := Boys.Get(SortedBoys[0])
-		return value[0:count]
+		return searchPossibleMatches(count, SortedBoys, Boys)
 	}
 
 	return []Single{}
+}
+
+func searchPossibleMatches(
+	count int,
+	sortedHeights []int,
+	lookupMap *orderedmap.OrderedMap[int, []Single],
+) []Single {
+	var possibleMatches []Single
+
+	for _, height := range sortedHeights {
+		singles, _ := lookupMap.Get(height)
+		take := math.Min(float64(len(singles)), float64(count))
+		possibleMatches = append(possibleMatches, singles[0:int(take)]...)
+		count -= int(take)
+		if count == 0 {
+			break
+		}
+	}
+	return possibleMatches
 }
 
 func AddAndMatch(single Single) []Single {

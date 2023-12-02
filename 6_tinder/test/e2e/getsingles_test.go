@@ -104,6 +104,17 @@ func (s *GetSinglesTestSuite) Test_noGirlExists_responsePartialHighestBoys() {
 	assert.End()
 }
 
+func (s *GetSinglesTestSuite) Test_noGirlExists_responseMultiHighBoys() {
+	s.givenSingleAdded("BOY", 170, 1)
+	s.givenSingleAdded("BOY", 180, 1)
+
+	response := s.getMostPossibleMatches("2")
+	assert := s.assertPossibleMatchSize(response, 2)
+	assert = s.assertResponseContent(assert, "0", "BOY", 180, 1)
+	assert = s.assertResponseContent(assert, "1", "BOY", 170, 1)
+	assert.End()
+}
+
 func (s *GetSinglesTestSuite) givenSingleAdded(gender string, height int, wantedDates int) {
 	single := &matching.Single{
 		Gender:      gender,
