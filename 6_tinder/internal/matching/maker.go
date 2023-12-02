@@ -2,6 +2,7 @@ package matching
 
 import (
 	"github.com/elliotchance/orderedmap/v2"
+	"math"
 	"sort"
 )
 
@@ -25,9 +26,20 @@ func GetPossibleMatches(count int) []Single {
 	if Boys.Len() == 0 && Girls.Len() == 0 {
 		return []Single{}
 	}
+
+	var possibleMatches []Single
+
 	if Boys.Len() == 0 {
-		value, _ := Girls.Get(SortedGirls[0])
-		return value[0:count]
+		for _, height := range SortedGirls {
+			singles, _ := Girls.Get(height)
+			take := math.Min(float64(len(singles)), float64(count))
+			possibleMatches = append(possibleMatches, singles[0:int(take)]...)
+			count -= int(take)
+			if count == 0 {
+				break
+			}
+		}
+		return possibleMatches
 	}
 	if Girls.Len() == 0 {
 		value, _ := Boys.Get(SortedBoys[0])
