@@ -2,6 +2,7 @@ package e2e
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/steinfletcher/apitest"
 	"github.com/steinfletcher/apitest-jsonpath"
 	"github.com/stretchr/testify/suite"
@@ -46,13 +47,9 @@ func (s *GetSinglesTestSuite) Test_noBoyExists_responseAllShortestGirls() {
 	s.givenSingleAdded("GIRL", 165, 1)
 
 	response := s.getMostPossibleMatches("1")
-	response.
-		Status(http.StatusOK).
-		Assert(jsonpath.Len("$", 1)).
-		Assert(jsonpath.Equal("$[0].gender", "GIRL")).
-		Assert(jsonpath.Equal("$[0].height", float64(165))).
-		Assert(jsonpath.Equal("$[0].wantedDates", float64(1))).
-		End()
+	assert := s.assertPossibleMatchSize(response, 1)
+	assert = s.assertResponseContent(assert, "0", "GIRL", 165, 1)
+	assert.End()
 }
 
 func (s *GetSinglesTestSuite) Test_noBoyExists_responsePartialShortestGirls() {
@@ -60,13 +57,9 @@ func (s *GetSinglesTestSuite) Test_noBoyExists_responsePartialShortestGirls() {
 	s.givenSingleAdded("GIRL", 165, 1)
 
 	response := s.getMostPossibleMatches("1")
-	response.
-		Status(http.StatusOK).
-		Assert(jsonpath.Len("$", 1)).
-		Assert(jsonpath.Equal("$[0].gender", "GIRL")).
-		Assert(jsonpath.Equal("$[0].height", float64(165))).
-		Assert(jsonpath.Equal("$[0].wantedDates", float64(1))).
-		End()
+	assert := s.assertPossibleMatchSize(response, 1)
+	assert = s.assertResponseContent(assert, "0", "GIRL", 165, 1)
+	assert.End()
 }
 
 func (s *GetSinglesTestSuite) Test_noBoyExists_responseMultiShortGirls() {
@@ -74,16 +67,10 @@ func (s *GetSinglesTestSuite) Test_noBoyExists_responseMultiShortGirls() {
 	s.givenSingleAdded("GIRL", 170, 1)
 
 	response := s.getMostPossibleMatches("2")
-	response.
-		Status(http.StatusOK).
-		Assert(jsonpath.Len("$", 2)).
-		Assert(jsonpath.Equal("$[0].gender", "GIRL")).
-		Assert(jsonpath.Equal("$[0].height", float64(165))).
-		Assert(jsonpath.Equal("$[0].wantedDates", float64(1))).
-		Assert(jsonpath.Equal("$[1].gender", "GIRL")).
-		Assert(jsonpath.Equal("$[1].height", float64(170))).
-		Assert(jsonpath.Equal("$[1].wantedDates", float64(1))).
-		End()
+	assert := s.assertPossibleMatchSize(response, 2)
+	assert = s.assertResponseContent(assert, "0", "GIRL", 165, 1)
+	assert = s.assertResponseContent(assert, "1", "GIRL", 170, 1)
+	assert.End()
 }
 
 func (s *GetSinglesTestSuite) Test_noGirlExists_responseAllHighestBoys() {
@@ -91,13 +78,9 @@ func (s *GetSinglesTestSuite) Test_noGirlExists_responseAllHighestBoys() {
 	s.givenSingleAdded("BOY", 185, 1)
 
 	response := s.getMostPossibleMatches("1")
-	response.
-		Status(http.StatusOK).
-		Assert(jsonpath.Len("$", 1)).
-		Assert(jsonpath.Equal("$[0].gender", "BOY")).
-		Assert(jsonpath.Equal("$[0].height", float64(185))).
-		Assert(jsonpath.Equal("$[0].wantedDates", float64(1))).
-		End()
+	assert := s.assertPossibleMatchSize(response, 1)
+	assert = s.assertResponseContent(assert, "0", "BOY", 185, 1)
+	assert.End()
 }
 
 func (s *GetSinglesTestSuite) Test_noGirlExists_responsePartialHighestBoys() {
@@ -105,13 +88,9 @@ func (s *GetSinglesTestSuite) Test_noGirlExists_responsePartialHighestBoys() {
 	s.givenSingleAdded("BOY", 170, 1)
 
 	response := s.getMostPossibleMatches("1")
-	response.
-		Status(http.StatusOK).
-		Assert(jsonpath.Len("$", 1)).
-		Assert(jsonpath.Equal("$[0].gender", "BOY")).
-		Assert(jsonpath.Equal("$[0].height", float64(170))).
-		Assert(jsonpath.Equal("$[0].wantedDates", float64(1))).
-		End()
+	assert := s.assertPossibleMatchSize(response, 1)
+	assert = s.assertResponseContent(assert, "0", "BOY", 170, 1)
+	assert.End()
 }
 
 func (s *GetSinglesTestSuite) givenSingleAdded(gender string, height int, wantedDates int) {
@@ -150,8 +129,25 @@ func (s *GetSinglesTestSuite) shouldResponseEmptyContent(response *apitest.Respo
 }
 
 func (s *GetSinglesTestSuite) shouldResponseEmptyMatches(response *apitest.Response) apitest.Result {
+	return s.assertPossibleMatchSize(response, 0).
+		End()
+}
+
+func (s *GetSinglesTestSuite) assertPossibleMatchSize(response *apitest.Response, length int) *apitest.Response {
 	return response.
 		Status(http.StatusOK).
-		Assert(jsonpath.Len("$", 0)).
-		End()
+		Assert(jsonpath.Len("$", length))
+}
+
+func (s *GetSinglesTestSuite) assertResponseContent(
+	assert *apitest.Response,
+	index string,
+	gender string,
+	height int,
+	wantedDates int,
+) *apitest.Response {
+	return assert.
+		Assert(jsonpath.Equal(fmt.Sprintf("$[%s].gender", index), gender)).
+		Assert(jsonpath.Equal(fmt.Sprintf("$[%s].height", index), float64(height))).
+		Assert(jsonpath.Equal(fmt.Sprintf("$[%s].wantedDates", index), float64(wantedDates)))
 }
