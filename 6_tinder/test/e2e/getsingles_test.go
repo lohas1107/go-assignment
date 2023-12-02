@@ -73,6 +73,17 @@ func (s *GetSinglesTestSuite) Test_noBoyExists_responseMultiShortGirls() {
 	assert.End()
 }
 
+func (s *GetSinglesTestSuite) Test_noBoyExists_responseInsufficientShortGirls() {
+	s.givenSingleAdded("GIRL", 165, 1)
+	s.givenSingleAdded("GIRL", 170, 1)
+
+	response := s.getMostPossibleMatches("3")
+	assert := s.assertPossibleMatchSize(response, 2)
+	assert = s.assertResponseContent(assert, "0", "GIRL", 165, 1)
+	assert = s.assertResponseContent(assert, "1", "GIRL", 170, 1)
+	assert.End()
+}
+
 func (s *GetSinglesTestSuite) Test_noGirlExists_responseAllHighestBoys() {
 	s.givenSingleAdded("BOY", 170, 1)
 	s.givenSingleAdded("BOY", 185, 1)
