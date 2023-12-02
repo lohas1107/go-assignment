@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/steinfletcher/apitest"
+	"github.com/steinfletcher/apitest-jsonpath"
 	"net/http"
 	"testing"
 	"tinder/internal/matching"
@@ -52,4 +53,31 @@ func GivenSingleAdding(gender string, height int, wantedDates int) *apitest.Resp
 		Post(GetUrl("/singles")).
 		Body(string(request)).
 		Expect(test)
+}
+
+func ShouldResponseBadRequest(response *apitest.Response) apitest.Result {
+	return response.
+		Status(http.StatusBadRequest).
+		Assert(jsonpath.NotPresent("$")).
+		End()
+}
+
+func ShouldResponseEmptyMatches(response *apitest.Response, status int) apitest.Result {
+	return response.
+		Status(status).
+		Assert(jsonpath.Len("$", 0)).
+		End()
+}
+
+func AssertMatchesLength(response *apitest.Response, status int, length int) *apitest.Response {
+	return response.
+		Status(status).
+		Assert(jsonpath.Len("$", length))
+}
+
+func AssertMatchesContent(assert *apitest.Response, index int, gender string, height int, wantedDates int) *apitest.Response {
+	return assert.
+		Assert(jsonpath.Equal(fmt.Sprintf("$[%v].gender", index), gender)).
+		Assert(jsonpath.Equal(fmt.Sprintf("$[%v].height", index), float64(height))).
+		Assert(jsonpath.Equal(fmt.Sprintf("$[%v].wantedDates", index), float64(wantedDates)))
 }
