@@ -48,6 +48,7 @@ func GivenSingleAdded(gender string, height int, wantedDates int) apitest.Result
 
 func GivenSingleAdding(gender string, height int, wantedDates int) *apitest.Response {
 	single := &matching.Single{
+		Name:        "ABC",
 		Gender:      gender,
 		Height:      height,
 		WantedDates: wantedDates,
