@@ -37,7 +37,7 @@ func GetPossibleSingles(context *gin.Context) {
 }
 
 func PostSingle(context *gin.Context) {
-	var single matching.Single
+	var single *matching.Single
 	err := context.BindJSON(&single)
 	if err != nil {
 		context.JSON(http.StatusBadRequest, nil)

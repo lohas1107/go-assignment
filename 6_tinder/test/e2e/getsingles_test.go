@@ -29,88 +29,20 @@ func (s *GetSinglesTestSuite) Test_noSingleExists() {
 	ShouldResponseEmptyMatches(response, http.StatusOK)
 }
 
-func (s *GetSinglesTestSuite) Test_noBoyExists_responseAllShortestGirls() {
+func (s *GetSinglesTestSuite) Test_noBoyExists() {
 	GivenSingleAdded("GIRL", 170, 1)
 	GivenSingleAdded("GIRL", 165, 1)
 
 	response := QueryMostPossibleMatches(1)
-	assert := AssertMatchesLength(response, http.StatusOK, 1)
-	assert = AssertMatchesContent(assert, 0, "GIRL", 165, 1)
-	assert.End()
+	ShouldResponseEmptyMatches(response, http.StatusOK)
 }
 
-func (s *GetSinglesTestSuite) Test_noBoyExists_responsePartialShortestGirls() {
-	GivenSingleAdded("GIRL", 165, 1)
-	GivenSingleAdded("GIRL", 165, 1)
-
-	response := QueryMostPossibleMatches(1)
-	assert := AssertMatchesLength(response, http.StatusOK, 1)
-	assert = AssertMatchesContent(assert, 0, "GIRL", 165, 1)
-	assert.End()
-}
-
-func (s *GetSinglesTestSuite) Test_noBoyExists_responseMultiShortGirls() {
-	GivenSingleAdded("GIRL", 165, 1)
-	GivenSingleAdded("GIRL", 170, 1)
-
-	response := QueryMostPossibleMatches(2)
-	assert := AssertMatchesLength(response, http.StatusOK, 2)
-	assert = AssertMatchesContent(assert, 0, "GIRL", 165, 1)
-	assert = AssertMatchesContent(assert, 1, "GIRL", 170, 1)
-	assert.End()
-}
-
-func (s *GetSinglesTestSuite) Test_noBoyExists_responseInsufficientShortGirls() {
-	GivenSingleAdded("GIRL", 165, 1)
-	GivenSingleAdded("GIRL", 170, 1)
-
-	response := QueryMostPossibleMatches(3)
-	assert := AssertMatchesLength(response, http.StatusOK, 2)
-	assert = AssertMatchesContent(assert, 0, "GIRL", 165, 1)
-	assert = AssertMatchesContent(assert, 1, "GIRL", 170, 1)
-	assert.End()
-}
-
-func (s *GetSinglesTestSuite) Test_noGirlExists_responseAllHighestBoys() {
+func (s *GetSinglesTestSuite) Test_noGirlExists() {
 	GivenSingleAdded("BOY", 170, 1)
 	GivenSingleAdded("BOY", 185, 1)
 
 	response := QueryMostPossibleMatches(1)
-	assert := AssertMatchesLength(response, http.StatusOK, 1)
-	assert = AssertMatchesContent(assert, 0, "BOY", 185, 1)
-	assert.End()
-}
-
-func (s *GetSinglesTestSuite) Test_noGirlExists_responsePartialHighestBoys() {
-	GivenSingleAdded("BOY", 170, 1)
-	GivenSingleAdded("BOY", 170, 1)
-
-	response := QueryMostPossibleMatches(1)
-	assert := AssertMatchesLength(response, http.StatusOK, 1)
-	assert = AssertMatchesContent(assert, 0, "BOY", 170, 1)
-	assert.End()
-}
-
-func (s *GetSinglesTestSuite) Test_noGirlExists_responseMultiHighBoys() {
-	GivenSingleAdded("BOY", 170, 1)
-	GivenSingleAdded("BOY", 180, 1)
-
-	response := QueryMostPossibleMatches(22)
-	assert := AssertMatchesLength(response, http.StatusOK, 2)
-	assert = AssertMatchesContent(assert, 0, "BOY", 180, 1)
-	assert = AssertMatchesContent(assert, 1, "BOY", 170, 1)
-	assert.End()
-}
-
-func (s *GetSinglesTestSuite) Test_noGirlExists_responseInsufficientHighBoys() {
-	GivenSingleAdded("BOY", 170, 1)
-	GivenSingleAdded("BOY", 180, 1)
-
-	response := QueryMostPossibleMatches(3)
-	assert := AssertMatchesLength(response, http.StatusOK, 2)
-	assert = AssertMatchesContent(assert, 0, "BOY", 180, 1)
-	assert = AssertMatchesContent(assert, 1, "BOY", 170, 1)
-	assert.End()
+	ShouldResponseEmptyMatches(response, http.StatusOK)
 }
 
 func (s *GetSinglesTestSuite) Test_BoysAndGirlsExist_responseAllMostPossibleSingles() {

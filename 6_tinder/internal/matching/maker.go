@@ -7,31 +7,24 @@ import (
 )
 
 var (
-	Boys  *orderedmap.OrderedMap[int, []Single]
-	Girls *orderedmap.OrderedMap[int, []Single]
+	Boys  *orderedmap.OrderedMap[int, []*Single]
+	Girls *orderedmap.OrderedMap[int, []*Single]
 
 	SortedBoys  []int
 	SortedGirls []int
 )
 
 func Initialize() {
-	Boys = orderedmap.NewOrderedMap[int, []Single]()
-	Girls = orderedmap.NewOrderedMap[int, []Single]()
+	Boys = orderedmap.NewOrderedMap[int, []*Single]()
+	Girls = orderedmap.NewOrderedMap[int, []*Single]()
 
 	SortedBoys = []int{}
 	SortedGirls = []int{}
 }
 
-func GetPossibleMatches(count int) []Single {
-	if Boys.Len() == 0 && Girls.Len() == 0 {
-		return []Single{}
-	}
-
-	if Boys.Len() == 0 {
-		return searchPossibleMatches(count, SortedGirls, Girls)
-	}
-	if Girls.Len() == 0 {
-		return searchPossibleMatches(count, SortedBoys, Boys)
+func GetPossibleMatches(count int) []*Single {
+	if Boys.Len() == 0 || Girls.Len() == 0 {
+		return []*Single{}
 	}
 
 	half := count / 2
@@ -52,9 +45,9 @@ func GetPossibleMatches(count int) []Single {
 func searchPossibleMatches(
 	count int,
 	sortedHeights []int,
-	lookupMap *orderedmap.OrderedMap[int, []Single],
-) []Single {
-	var possibleMatches []Single
+	lookupMap *orderedmap.OrderedMap[int, []*Single],
+) []*Single {
+	var possibleMatches []*Single
 
 	for _, height := range sortedHeights {
 		singles, _ := lookupMap.Get(height)
@@ -68,14 +61,14 @@ func searchPossibleMatches(
 	return possibleMatches
 }
 
-func AddAndMatch(single Single) []Single {
+func AddAndMatch(single *Single) []*Single {
 	add(single)
 	return match(single)
 }
 
-func add(single Single) {
+func add(single *Single) {
 	if single.IsBoy() {
-		list := Boys.GetOrDefault(single.Height, []Single{})
+		list := Boys.GetOrDefault(single.Height, []*Single{})
 		list = append(list, single)
 		Boys.Set(single.Height, list)
 
@@ -87,7 +80,7 @@ func add(single Single) {
 		}
 	}
 	if single.IsGirl() {
-		list := Girls.GetOrDefault(single.Height, []Single{})
+		list := Girls.GetOrDefault(single.Height, []*Single{})
 		list = append(list, single)
 		Girls.Set(single.Height, list)
 
@@ -98,11 +91,11 @@ func add(single Single) {
 	}
 }
 
-func match(single Single) []Single {
+func match(single *Single) []*Single {
 	if single.IsBoy() && Girls.Len() > 0 {
 		shortest := Girls.Front()
 		if single.Height < shortest.Key {
-			return []Single{}
+			return []*Single{}
 		}
 		return shortest.Value
 	}
@@ -110,10 +103,10 @@ func match(single Single) []Single {
 	if single.IsGirl() && Boys.Len() > 0 {
 		highest := Boys.Front()
 		if single.Height > highest.Key {
-			return []Single{}
+			return []*Single{}
 		}
 		return highest.Value
 	}
 
-	return []Single{}
+	return []*Single{}
 }
