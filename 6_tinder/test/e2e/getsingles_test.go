@@ -10,7 +10,6 @@ import (
 
 type GetSinglesTestSuite struct {
 	suite.Suite
-	Url string
 }
 
 func TestGetSinglesTestSuite(t *testing.T) {
@@ -19,7 +18,6 @@ func TestGetSinglesTestSuite(t *testing.T) {
 }
 
 func (s *GetSinglesTestSuite) SetupTest() {
-	s.Url = GetUrl("/singles")
 	Reset()
 }
 

@@ -8,8 +8,6 @@ import (
 
 type AddSingleTestSuite struct {
 	suite.Suite
-	httpClient *http.Client
-	Url        string
 }
 
 func TestAddSingleTestSuite(t *testing.T) {
@@ -18,7 +16,6 @@ func TestAddSingleTestSuite(t *testing.T) {
 }
 
 func (s *AddSingleTestSuite) SetupTest() {
-	s.Url = GetUrl("/singles")
 	Reset()
 }
 
