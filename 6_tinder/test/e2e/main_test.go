@@ -6,7 +6,9 @@ import (
 	"github.com/steinfletcher/apitest"
 	"github.com/steinfletcher/apitest-jsonpath"
 	"net/http"
+	"strconv"
 	"testing"
+	"tinder/cmd/matching/router"
 	"tinder/internal/matching"
 )
 
@@ -30,6 +32,14 @@ func Reset() apitest.Result {
 		Expect(test).
 		Status(http.StatusOK).
 		End()
+}
+
+func QueryMostPossibleMatches(count int) *apitest.Response {
+	return apitest.New().Debug().
+		EnableNetworking(http.DefaultClient).
+		Get(GetUrl("/singles")).
+		Query(router.QueryKeyMostPossible, strconv.Itoa(count)).
+		Expect(test)
 }
 
 func GivenSingleAdded(gender string, height int, wantedDates int) apitest.Result {
