@@ -1,7 +1,6 @@
 package e2e
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/steinfletcher/apitest"
 	"github.com/steinfletcher/apitest-jsonpath"
@@ -9,7 +8,6 @@ import (
 	"net/http"
 	"testing"
 	"tinder/cmd/matching/router"
-	"tinder/internal/matching"
 )
 
 type GetSinglesTestSuite struct {
@@ -43,8 +41,8 @@ func (s *GetSinglesTestSuite) Test_noSingleExists() {
 }
 
 func (s *GetSinglesTestSuite) Test_noBoyExists_responseAllShortestGirls() {
-	s.givenSingleAdded("GIRL", 170, 1)
-	s.givenSingleAdded("GIRL", 165, 1)
+	GivenSingleAdded("GIRL", 170, 1)
+	GivenSingleAdded("GIRL", 165, 1)
 
 	response := s.getMostPossibleMatches("1")
 	assert := s.assertPossibleMatchSize(response, 1)
@@ -53,8 +51,8 @@ func (s *GetSinglesTestSuite) Test_noBoyExists_responseAllShortestGirls() {
 }
 
 func (s *GetSinglesTestSuite) Test_noBoyExists_responsePartialShortestGirls() {
-	s.givenSingleAdded("GIRL", 165, 1)
-	s.givenSingleAdded("GIRL", 165, 1)
+	GivenSingleAdded("GIRL", 165, 1)
+	GivenSingleAdded("GIRL", 165, 1)
 
 	response := s.getMostPossibleMatches("1")
 	assert := s.assertPossibleMatchSize(response, 1)
@@ -63,8 +61,8 @@ func (s *GetSinglesTestSuite) Test_noBoyExists_responsePartialShortestGirls() {
 }
 
 func (s *GetSinglesTestSuite) Test_noBoyExists_responseMultiShortGirls() {
-	s.givenSingleAdded("GIRL", 165, 1)
-	s.givenSingleAdded("GIRL", 170, 1)
+	GivenSingleAdded("GIRL", 165, 1)
+	GivenSingleAdded("GIRL", 170, 1)
 
 	response := s.getMostPossibleMatches("2")
 	assert := s.assertPossibleMatchSize(response, 2)
@@ -74,8 +72,8 @@ func (s *GetSinglesTestSuite) Test_noBoyExists_responseMultiShortGirls() {
 }
 
 func (s *GetSinglesTestSuite) Test_noBoyExists_responseInsufficientShortGirls() {
-	s.givenSingleAdded("GIRL", 165, 1)
-	s.givenSingleAdded("GIRL", 170, 1)
+	GivenSingleAdded("GIRL", 165, 1)
+	GivenSingleAdded("GIRL", 170, 1)
 
 	response := s.getMostPossibleMatches("3")
 	assert := s.assertPossibleMatchSize(response, 2)
@@ -85,8 +83,8 @@ func (s *GetSinglesTestSuite) Test_noBoyExists_responseInsufficientShortGirls() 
 }
 
 func (s *GetSinglesTestSuite) Test_noGirlExists_responseAllHighestBoys() {
-	s.givenSingleAdded("BOY", 170, 1)
-	s.givenSingleAdded("BOY", 185, 1)
+	GivenSingleAdded("BOY", 170, 1)
+	GivenSingleAdded("BOY", 185, 1)
 
 	response := s.getMostPossibleMatches("1")
 	assert := s.assertPossibleMatchSize(response, 1)
@@ -95,8 +93,8 @@ func (s *GetSinglesTestSuite) Test_noGirlExists_responseAllHighestBoys() {
 }
 
 func (s *GetSinglesTestSuite) Test_noGirlExists_responsePartialHighestBoys() {
-	s.givenSingleAdded("BOY", 170, 1)
-	s.givenSingleAdded("BOY", 170, 1)
+	GivenSingleAdded("BOY", 170, 1)
+	GivenSingleAdded("BOY", 170, 1)
 
 	response := s.getMostPossibleMatches("1")
 	assert := s.assertPossibleMatchSize(response, 1)
@@ -105,8 +103,8 @@ func (s *GetSinglesTestSuite) Test_noGirlExists_responsePartialHighestBoys() {
 }
 
 func (s *GetSinglesTestSuite) Test_noGirlExists_responseMultiHighBoys() {
-	s.givenSingleAdded("BOY", 170, 1)
-	s.givenSingleAdded("BOY", 180, 1)
+	GivenSingleAdded("BOY", 170, 1)
+	GivenSingleAdded("BOY", 180, 1)
 
 	response := s.getMostPossibleMatches("2")
 	assert := s.assertPossibleMatchSize(response, 2)
@@ -116,8 +114,8 @@ func (s *GetSinglesTestSuite) Test_noGirlExists_responseMultiHighBoys() {
 }
 
 func (s *GetSinglesTestSuite) Test_noGirlExists_responseInsufficientHighBoys() {
-	s.givenSingleAdded("BOY", 170, 1)
-	s.givenSingleAdded("BOY", 180, 1)
+	GivenSingleAdded("BOY", 170, 1)
+	GivenSingleAdded("BOY", 180, 1)
 
 	response := s.getMostPossibleMatches("3")
 	assert := s.assertPossibleMatchSize(response, 2)
@@ -127,8 +125,8 @@ func (s *GetSinglesTestSuite) Test_noGirlExists_responseInsufficientHighBoys() {
 }
 
 func (s *GetSinglesTestSuite) Test_BoysAndGirlsExist_responseAllMostPossibleSingles() {
-	s.givenSingleAdded("BOY", 170, 1)
-	s.givenSingleAdded("GIRL", 180, 1)
+	GivenSingleAdded("BOY", 170, 1)
+	GivenSingleAdded("GIRL", 180, 1)
 
 	response := s.getMostPossibleMatches("1")
 	assert := s.assertPossibleMatchSize(response, 1)
@@ -137,9 +135,9 @@ func (s *GetSinglesTestSuite) Test_BoysAndGirlsExist_responseAllMostPossibleSing
 }
 
 func (s *GetSinglesTestSuite) Test_BoysAndGirlsExist_responsePartialPossibleSingles() {
-	s.givenSingleAdded("BOY", 170, 1)
-	s.givenSingleAdded("BOY", 170, 1)
-	s.givenSingleAdded("GIRL", 180, 1)
+	GivenSingleAdded("BOY", 170, 1)
+	GivenSingleAdded("BOY", 170, 1)
+	GivenSingleAdded("GIRL", 180, 1)
 
 	response := s.getMostPossibleMatches("1")
 	assert := s.assertPossibleMatchSize(response, 1)
@@ -148,9 +146,9 @@ func (s *GetSinglesTestSuite) Test_BoysAndGirlsExist_responsePartialPossibleSing
 }
 
 func (s *GetSinglesTestSuite) Test_BoysAndGirlsExist_responseMultiPossibleSingles() {
-	s.givenSingleAdded("BOY", 170, 1)
-	s.givenSingleAdded("BOY", 170, 1)
-	s.givenSingleAdded("GIRL", 180, 1)
+	GivenSingleAdded("BOY", 170, 1)
+	GivenSingleAdded("BOY", 170, 1)
+	GivenSingleAdded("GIRL", 180, 1)
 
 	response := s.getMostPossibleMatches("2")
 	assert := s.assertPossibleMatchSize(response, 2)
@@ -160,10 +158,10 @@ func (s *GetSinglesTestSuite) Test_BoysAndGirlsExist_responseMultiPossibleSingle
 }
 
 func (s *GetSinglesTestSuite) Test_BoysAndGirlsExist_responseInsufficientPossibleSingles() {
-	s.givenSingleAdded("BOY", 170, 1)
-	s.givenSingleAdded("GIRL", 175, 1)
-	s.givenSingleAdded("GIRL", 180, 1)
-	s.givenSingleAdded("GIRL", 180, 1)
+	GivenSingleAdded("BOY", 170, 1)
+	GivenSingleAdded("GIRL", 175, 1)
+	GivenSingleAdded("GIRL", 180, 1)
+	GivenSingleAdded("GIRL", 180, 1)
 
 	response := s.getMostPossibleMatches("5")
 	assert := s.assertPossibleMatchSize(response, 4)
@@ -172,26 +170,6 @@ func (s *GetSinglesTestSuite) Test_BoysAndGirlsExist_responseInsufficientPossibl
 	assert = s.assertResponseContent(assert, "2", "GIRL", 180, 1)
 	assert = s.assertResponseContent(assert, "3", "GIRL", 180, 1)
 	assert.End()
-}
-
-func (s *GetSinglesTestSuite) givenSingleAdded(gender string, height int, wantedDates int) {
-	single := &matching.Single{
-		Gender:      gender,
-		Height:      height,
-		WantedDates: wantedDates,
-	}
-
-	request, err := json.Marshal(single)
-	if err != nil {
-		panic(err)
-	}
-
-	apitest.New().Debug().
-		EnableNetworking(http.DefaultClient).
-		Post(s.Url).
-		Body(string(request)).
-		Expect(s.T()).
-		End()
 }
 
 func (s *GetSinglesTestSuite) getMostPossibleMatches(mostPossibleQuery string) *apitest.Response {
