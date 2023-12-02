@@ -28,7 +28,7 @@ func GetUrl(path string) string {
 func Reset() apitest.Result {
 	return apitest.New().Debug().
 		EnableNetworking(http.DefaultClient).
-		Delete(GetUrl("/singles")).
+		Post(GetUrl("/reset")).
 		Expect(test).
 		Status(http.StatusOK).
 		End()

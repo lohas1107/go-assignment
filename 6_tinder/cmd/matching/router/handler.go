@@ -15,11 +15,6 @@ func Greet(context *gin.Context) {
 	context.JSON(http.StatusOK, "hello, world")
 }
 
-func DeleteAllSingles(context *gin.Context) {
-	matching.Initialize()
-	context.JSON(http.StatusOK, nil)
-}
-
 func GetPossibleSingles(context *gin.Context) {
 	count, err := strconv.Atoi(context.Query(QueryKeyMostPossible))
 	if err != nil {
@@ -51,4 +46,14 @@ func PostSingle(context *gin.Context) {
 
 	possibleMatches := matching.AddAndMatch(single)
 	context.JSON(http.StatusCreated, possibleMatches)
+}
+
+func ResetAllSingles(context *gin.Context) {
+	matching.Initialize()
+	context.JSON(http.StatusOK, nil)
+}
+
+func DeleteSingle(context *gin.Context) {
+	// todo
+	context.JSON(http.StatusOK, nil)
 }

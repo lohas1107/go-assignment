@@ -11,7 +11,8 @@ func SetUp() *gin.Engine {
 	v1 := router.Group("/v1")
 	v1.GET("/singles", GetPossibleSingles)
 	v1.POST("/singles", PostSingle)
-	v1.DELETE("/singles", DeleteAllSingles)
+	v1.POST("/reset", ResetAllSingles)
+	v1.DELETE("/singles", DeleteSingle)
 
 	return router
 }
