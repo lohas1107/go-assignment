@@ -11,6 +11,6 @@ run: build
 	docker run -d --name matching -p 8080:8080 tinder/matching
 
 e2e: run
-	$(GOROOT)/bin/go test $(CURDIR)/test/e2e
+	$(GOROOT)/bin/go test -v $(CURDIR)/test/e2e
 
 .PHONY: build
